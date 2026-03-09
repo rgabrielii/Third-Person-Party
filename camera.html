@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Camera Stream</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+<h1>Kamera Stream</h1>
+<video id="video" autoplay playsinline style="width:100%; max-width:600px;"></video>
+<script>
+const videoEl = document.getElementById('video');
+navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+.then(stream => {
+  videoEl.srcObject = stream;
+
+  // PeerJS
+  const peer = new Peer();
+  peer.on('open', id => {
+    console.log('Kamerans Peer ID:', id);
+  });
+
+  peer.on('call', call => {
+    call.answer(stream); // Skicka kameran
+  });
+})
+.catch(err => console.error(err));
+</script>
+</body>
+</html>

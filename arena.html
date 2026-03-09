@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Arena</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+body { margin:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+video { width:100%; height:auto; }
+</style>
+</head>
+<body>
+<script>
+const cameras = ["CAM_PEER_ID_1","CAM_PEER_ID_2"]; // Lägg till alla kameror
+
+cameras.forEach(camId => {
+  const videoEl = document.createElement("video");
+  videoEl.autoplay = true;
+  videoEl.playsInline = true;
+  document.body.appendChild(videoEl);
+
+  const peer = new Peer();
+  peer.on("open", ()=> {
+    const call = peer.call(camId,null);
+    call.on("stream", stream => {
+      videoEl.srcObject = stream;
+    });
+  });
+});
+</script>
+</body>
+</html>

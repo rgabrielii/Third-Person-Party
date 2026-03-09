@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VR Player – AI Stabilisering</title>
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+
+<style>
+body { margin:0; overflow:hidden; }
+canvas { width:100%; height:100vh; display:block; }
+</style>
+</head>
+<body>
+<canvas id="vrCanvas"></canvas>
+<script>
+const videoEl = document.createElement("video");
+videoEl.autoplay = true;
+videoEl.playsInline = true;
+
+const canvas = document.getElementById("vrCanvas");
+const ctx = canvas.getContext("2d");
+
+let detector;
+let videoStreamReady = false;
+
+// Peer-ID från URL
+const params = new URLSearchParams(location.search);
+const camId = params.get("cam");
+
+// PeerJS
+const peer = new Peer();
+peer.on("open", ()=> {
+  const call = peer.call(camId,null);
+  call.on("stream", stream => {
+    videoEl.srcObject = stream;
+    videoStreamReady = true;
+  });
+});
+
+// Initiera pose-estimation
+async function initPose() {
+  detector = await poseDetection.createDetector(poseDetection.SupportedModels.MediaPipePose, {
+    runtime: 'mediapipe',
+    modelType: 'lite'
+  });
+  requestAnimationFrame(drawLoop);
+}
+initPose();
+
+// Mjukgöring
+let smoothedX = 0;
+let smoothedY = 0;
+const smoothFactor = 0.2;
+
+async function drawLoop() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  if(videoStreamReady){
+    const poses = await detector.estimatePoses(videoEl);
+
+    let targetX = 0;
+    let targetY = 0;
+
+    if(poses.length > 0){
+      const keypoints = poses[0].keypoints;
+      const leftHip = keypoints.find(k => k.name==='left_hip');
+      const rightHip = keypoints.find(k => k.name==='right_hip');
+      const nose = keypoints.find(k => k.name==='nose');
+
+      if(leftHip && rightHip && nose){
+        const centerX = (leftHip.x + rightHip.x)/2;
+        const centerY = (leftHip.y + nose.y)/2;
+
+        targetX = canvas.width/2 - (centerX/videoEl.videoWidth*canvas.width);
+        targetY = canvas.height/2 - (centerY/videoEl.videoHeight*canvas.height);
+      }
+    }
+
+    smoothedX = smoothedX*(1-smoothFactor) + targetX*smoothFactor;
+    smoothedY = smoothedY*(1-smoothFactor) + targetY*smoothFactor;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(videoEl, smoothedX, smoothedY, canvas.width, canvas.height);
+  }
+
+  requestAnimationFrame(drawLoop);
+}
+</script>
+</body>
+</html>
