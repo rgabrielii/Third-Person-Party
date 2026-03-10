@@ -52,12 +52,14 @@ window.location.pathname.replace("camera.html","vr.html") +
 "?room="+room
 
 document.getElementById("cam").innerHTML =
-'<iframe src="'+camURL+'"></iframe>'
+'<iframe src="'+camURL+'" allow="camera; microphone; fullscreen"></iframe>'
 
 const canvas = document.createElement("canvas")
 document.getElementById("qr").appendChild(canvas)
 
 QRCode.toCanvas(canvas, vrURL,{width:250})
+
+}
 
 }
 
