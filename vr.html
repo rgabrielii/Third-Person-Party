@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>VR View</title>
+<title>VR Viewer</title>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
@@ -11,27 +11,22 @@
 body{
 margin:0;
 background:black;
+font-family:Arial;
 color:white;
 text-align:center;
-font-family:Arial;
 }
 
-#start{
-font-size:22px;
-padding:20px;
-margin-top:40px;
-}
-
-#vr{
-display:none;
+#video{
 width:100vw;
 height:100vh;
+object-fit:cover;
+background:black;
 }
 
-video{
-width:50vw;
-height:100vh;
-object-fit:cover;
+button{
+font-size:22px;
+padding:20px;
+margin-top:30px;
 }
 
 </style>
@@ -39,41 +34,33 @@ object-fit:cover;
 
 <body>
 
-<h2>VR Viewer</h2>
+<h2>Start VR</h2>
 
-<button id="start">Start VR</button>
+<button id="start">Connect Camera</button>
 
-<div id="vr">
-<video id="left" autoplay playsinline></video>
-<video id="right" autoplay playsinline></video>
-</div>
+<br>
+
+<video id="video" autoplay playsinline></video>
 
 <script>
 
 const params = new URLSearchParams(window.location.search)
 const camId = params.get("cam")
 
+const video = document.getElementById("video")
 const startBtn = document.getElementById("start")
-const vrDiv = document.getElementById("vr")
-
-const left = document.getElementById("left")
-const right = document.getElementById("right")
 
 startBtn.onclick = () => {
 
-startBtn.style.display="none"
-vrDiv.style.display="flex"
-
 const peer = new Peer()
 
-peer.on("open", id => {
+peer.on("open", () => {
 
 const call = peer.call(camId, new MediaStream())
 
 call.on("stream", stream => {
 
-left.srcObject = stream
-right.srcObject = stream
+video.srcObject = stream
 
 })
 
