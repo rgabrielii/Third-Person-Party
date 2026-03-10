@@ -9,24 +9,31 @@
 body{
 margin:0;
 background:black;
-display:flex;
 overflow:hidden;
+}
+
+#container{
+display:flex;
+width:100vw;
+height:100vh;
 }
 
 .eye{
 width:50vw;
 height:100vh;
+overflow:hidden;
 }
 
 .eye iframe{
-width:100%;
-height:100%;
+width:100vw;
+height:100vh;
 border:none;
 }
 
 #start{
 position:absolute;
 top:50%;
+left:50%;
 left:50%;
 transform:translate(-50%,-50%);
 font-size:28px;
@@ -41,6 +48,11 @@ z-index:10;
 
 <button id="start">Start VR</button>
 
+<div id="container" style="display:none;">
+<div class="eye" id="leftEye"></div>
+<div class="eye" id="rightEye"></div>
+</div>
+
 <script>
 
 const params = new URLSearchParams(location.search)
@@ -50,28 +62,22 @@ const viewURL =
 "https://vdo.ninja/?view="+room+"&cleanoutput&autoplay"
 
 const startBtn = document.getElementById("start")
+const container = document.getElementById("container")
 
 startBtn.onclick = () => {
 
 startBtn.remove()
+container.style.display="flex"
 
-const leftEye = document.createElement("div")
-const rightEye = document.createElement("div")
+const frame = document.createElement("iframe")
+frame.src = viewURL
 
-leftEye.className="eye"
-rightEye.className="eye"
+document.getElementById("leftEye").appendChild(frame)
 
-const left = document.createElement("iframe")
-const right = document.createElement("iframe")
+const frameClone = frame.cloneNode()
+frameClone.src = viewURL + "&v=" + Math.random()
 
-left.src=viewURL
-right.src=viewURL
-
-leftEye.appendChild(left)
-rightEye.appendChild(right)
-
-document.body.appendChild(leftEye)
-document.body.appendChild(rightEye)
+document.getElementById("rightEye").appendChild(frameClone)
 
 }
 
