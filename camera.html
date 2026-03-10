@@ -8,93 +8,95 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <style>
+
 body{
 font-family:Arial;
-text-align:center;
 background:#111;
 color:white;
+text-align:center;
 margin:0;
 padding:20px;
 }
 
 button{
-font-size:20px;
+font-size:22px;
 padding:15px 30px;
-margin:20px;
+margin-top:20px;
 }
 
 video{
 width:100%;
 max-width:600px;
-border-radius:10px;
 margin-top:20px;
+border-radius:12px;
 }
 
 #qr{
 margin-top:40px;
 }
+
 </style>
 </head>
 
 <body>
 
-<h1>Third Person Party-Cam</h1>
+<h1>Third Person Party Cam</h1>
 
 <button id="startBtn">Start Third Person Party-Cam</button>
 
 <br>
 
-<video id="video" autoplay playsinline></video>
+<video id="video" autoplay playsinline muted></video>
 
 <div id="qr"></div>
 
 <script>
 
-const startBtn = document.getElementById("startBtn");
-const video = document.getElementById("video");
-const qrDiv = document.getElementById("qr");
+const startBtn = document.getElementById("startBtn")
+const video = document.getElementById("video")
+const qrDiv = document.getElementById("qr")
 
-let peer;
-let stream;
+let peer
+let stream
 
 startBtn.onclick = async () => {
 
-startBtn.style.display="none";
+startBtn.style.display="none"
 
 stream = await navigator.mediaDevices.getUserMedia({
-video:{
-facingMode:"environment"
-},
+video:{ facingMode:"environment" },
 audio:false
-});
+})
 
-video.srcObject = stream;
+video.srcObject = stream
 
-peer = new Peer();
+peer = new Peer()
 
 peer.on("open", id => {
 
 const vrLink =
 window.location.origin +
 window.location.pathname.replace("camera.html","vr.html") +
-"?cam=" + id;
+"?cam=" + id
 
-QRcode = document.createElement("canvas");
-qrDiv.appendChild(QRcode);
+const canvas = document.createElement("canvas")
+qrDiv.appendChild(canvas)
 
-QRCode.toCanvas(QRcode, vrLink, {width:250});
+QRCode.toCanvas(canvas, vrLink, {width:260})
 
-const text = document.createElement("p");
-text.innerText="Scanna denna QR-kod med VR-telefonen";
-qrDiv.appendChild(text);
+const text = document.createElement("p")
+text.innerText="Scanna denna QR-kod med VR-telefonen"
+qrDiv.appendChild(text)
 
-});
+})
 
 peer.on("call", call => {
-call.answer(stream);
-});
 
-};
+call.answer(stream)
+
+})
+
+}
 
 </script>
 

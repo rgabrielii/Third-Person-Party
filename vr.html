@@ -16,7 +16,13 @@ text-align:center;
 font-family:Arial;
 }
 
-#container{
+#start{
+font-size:22px;
+padding:20px;
+margin-top:40px;
+}
+
+#vr{
 display:none;
 width:100vw;
 height:100vh;
@@ -28,57 +34,52 @@ height:100vh;
 object-fit:cover;
 }
 
-button{
-font-size:20px;
-padding:20px;
-margin-top:40px;
-}
-
 </style>
 </head>
 
 <body>
 
-<h2>Start VR</h2>
-<button id="startVR">Enter VR Mode</button>
+<h2>VR Viewer</h2>
 
-<div id="container">
+<button id="start">Start VR</button>
+
+<div id="vr">
 <video id="left" autoplay playsinline></video>
 <video id="right" autoplay playsinline></video>
 </div>
 
 <script>
 
-const params = new URLSearchParams(location.search);
-const camId = params.get("cam");
+const params = new URLSearchParams(window.location.search)
+const camId = params.get("cam")
 
-const left = document.getElementById("left");
-const right = document.getElementById("right");
+const startBtn = document.getElementById("start")
+const vrDiv = document.getElementById("vr")
 
-const startBtn = document.getElementById("startVR");
-const container = document.getElementById("container");
+const left = document.getElementById("left")
+const right = document.getElementById("right")
 
 startBtn.onclick = () => {
 
-startBtn.style.display="none";
-container.style.display="flex";
+startBtn.style.display="none"
+vrDiv.style.display="flex"
 
-const peer = new Peer();
+const peer = new Peer()
 
-peer.on("open", ()=>{
+peer.on("open", id => {
 
-const call = peer.call(camId,null);
+const call = peer.call(camId, new MediaStream())
 
 call.on("stream", stream => {
 
-left.srcObject = stream;
-right.srcObject = stream;
+left.srcObject = stream
+right.srcObject = stream
 
-});
+})
 
-});
+})
 
-};
+}
 
 </script>
 
