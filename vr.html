@@ -13,9 +13,19 @@ overflow:hidden;
 display:flex;
 }
 
-iframe{
+.eye{
 width:50vw;
 height:100vh;
+overflow:hidden;
+position:relative;
+}
+
+iframe{
+position:absolute;
+width:120vw;
+height:120vh;
+left:-10vw;
+top:-10vh;
 border:none;
 }
 
@@ -50,14 +60,23 @@ startBtn.onclick = () => {
 
 startBtn.remove()
 
+const leftEye = document.createElement("div")
+const rightEye = document.createElement("div")
+
+leftEye.className = "eye"
+rightEye.className = "eye"
+
 const left = document.createElement("iframe")
 const right = document.createElement("iframe")
 
 left.src = viewURL
 right.src = viewURL
 
-document.body.appendChild(left)
-document.body.appendChild(right)
+leftEye.appendChild(left)
+rightEye.appendChild(right)
+
+document.body.appendChild(leftEye)
+document.body.appendChild(rightEye)
 
 }
 
