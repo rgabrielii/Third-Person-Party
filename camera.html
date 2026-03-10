@@ -1,110 +1,100 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Camera</title>
+<meta charset="utf-8">
+<title>Third Person Party Cam</title>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <style>
-
 body{
-font-family:sans-serif;
+font-family:Arial;
 text-align:center;
+background:#111;
+color:white;
+margin:0;
 padding:20px;
+}
+
+button{
+font-size:20px;
+padding:15px 30px;
+margin:20px;
 }
 
 video{
 width:100%;
-max-width:500px;
+max-width:600px;
 border-radius:10px;
-}
-
-button{
-font-size:18px;
-padding:10px 20px;
-margin:10px;
-}
-
-#qrcode{
 margin-top:20px;
 }
 
+#qr{
+margin-top:40px;
+}
 </style>
-
 </head>
 
 <body>
 
-<h2>Camera</h2>
+<h1>Third Person Party-Cam</h1>
+
+<button id="startBtn">Start Third Person Party-Cam</button>
+
+<br>
 
 <video id="video" autoplay playsinline></video>
 
-<br>
-
-<button onclick="startCamera()">Start Camera</button>
-
-<br>
-
-<button onclick="startTimer()">Start Race</button>
-
-<h3 id="timer">00:00</h3>
-
-<div id="qrcode"></div>
+<div id="qr"></div>
 
 <script>
 
+const startBtn = document.getElementById("startBtn");
+const video = document.getElementById("video");
+const qrDiv = document.getElementById("qr");
+
 let peer;
 let stream;
-let startTime;
 
-async function startCamera(){
+startBtn.onclick = async () => {
+
+startBtn.style.display="none";
 
 stream = await navigator.mediaDevices.getUserMedia({
-video:{facingMode:"environment"},
+video:{
+facingMode:"environment"
+},
 audio:false
 });
 
-document.getElementById("video").srcObject = stream;
+video.srcObject = stream;
 
 peer = new Peer();
 
 peer.on("open", id => {
 
-const url = location.origin + "/viewer.html?cam=" + id;
+const vrLink =
+window.location.origin +
+window.location.pathname.replace("camera.html","vr.html") +
+"?cam=" + id;
 
-QRCode.toCanvas(document.getElementById('qrcode'), url);
+QRcode = document.createElement("canvas");
+qrDiv.appendChild(QRcode);
+
+QRCode.toCanvas(QRcode, vrLink, {width:250});
+
+const text = document.createElement("p");
+text.innerText="Scanna denna QR-kod med VR-telefonen";
+qrDiv.appendChild(text);
 
 });
 
 peer.on("call", call => {
-
 call.answer(stream);
-
 });
 
-}
-
-function startTimer(){
-
-startTime = Date.now();
-
-setInterval(()=>{
-
-let t = Date.now() - startTime;
-
-let s = Math.floor(t/1000)%60;
-let m = Math.floor(t/60000);
-
-document.getElementById("timer").innerText =
-String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-
-},1000);
-
-}
+};
 
 </script>
 

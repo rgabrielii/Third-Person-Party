@@ -1,57 +1,37 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VR Viewer</title>
+<meta charset="utf-8">
+<title>VR View</title>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
 <style>
-
 body{
 margin:0;
 background:black;
+overflow:hidden;
 }
 
-#videos{
+#container{
 display:flex;
-width:100%;
+width:100vw;
 height:100vh;
 }
 
 video{
-width:50%;
+width:50vw;
+height:100vh;
 object-fit:cover;
 }
-
-#ui{
-position:absolute;
-top:10px;
-left:10px;
-color:white;
-font-family:sans-serif;
-}
-
-button{
-font-size:16px;
-padding:8px;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div id="ui">
-<button onclick="enterVR()">Enter VR</button>
-</div>
-
-<div id="videos">
-
-<video id="left" autoplay playsinline></video> <video id="right" autoplay playsinline></video>
-
+<div id="container">
+<video id="left" autoplay playsinline></video>
+<video id="right" autoplay playsinline></video>
 </div>
 
 <script>
@@ -59,26 +39,23 @@ padding:8px;
 const params = new URLSearchParams(location.search);
 const camId = params.get("cam");
 
+const left = document.getElementById("left");
+const right = document.getElementById("right");
+
 const peer = new Peer();
 
-peer.on("open", id => {
+peer.on("open", ()=>{
 
 const call = peer.call(camId,null);
 
 call.on("stream", stream => {
 
-document.getElementById("left").srcObject = stream;
-document.getElementById("right").srcObject = stream;
+left.srcObject = stream;
+right.srcObject = stream;
 
 });
 
 });
-
-function enterVR(){
-
-document.documentElement.requestFullscreen();
-
-}
 
 </script>
 
