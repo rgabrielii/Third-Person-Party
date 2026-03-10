@@ -7,14 +7,17 @@
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
 <style>
+
 body{
 margin:0;
 background:black;
-overflow:hidden;
+color:white;
+text-align:center;
+font-family:Arial;
 }
 
 #container{
-display:flex;
+display:none;
 width:100vw;
 height:100vh;
 }
@@ -24,10 +27,20 @@ width:50vw;
 height:100vh;
 object-fit:cover;
 }
+
+button{
+font-size:20px;
+padding:20px;
+margin-top:40px;
+}
+
 </style>
 </head>
 
 <body>
+
+<h2>Start VR</h2>
+<button id="startVR">Enter VR Mode</button>
 
 <div id="container">
 <video id="left" autoplay playsinline></video>
@@ -41,6 +54,14 @@ const camId = params.get("cam");
 
 const left = document.getElementById("left");
 const right = document.getElementById("right");
+
+const startBtn = document.getElementById("startVR");
+const container = document.getElementById("container");
+
+startBtn.onclick = () => {
+
+startBtn.style.display="none";
+container.style.display="flex";
 
 const peer = new Peer();
 
@@ -56,6 +77,8 @@ right.srcObject = stream;
 });
 
 });
+
+};
 
 </script>
 
