@@ -2,31 +2,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>VR Viewer</title>
-
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<title>VR View</title>
 
 <style>
 
 body{
 margin:0;
 background:black;
-font-family:Arial;
-color:white;
-text-align:center;
+display:flex;
 }
 
-#video{
-width:100vw;
+iframe{
+width:50vw;
 height:100vh;
-object-fit:cover;
-background:black;
-}
-
-button{
-font-size:22px;
-padding:20px;
-margin-top:30px;
+border:none;
 }
 
 </style>
@@ -34,39 +23,17 @@ margin-top:30px;
 
 <body>
 
-<h2>Start VR</h2>
-
-<button id="start">Connect Camera</button>
-
-<br>
-
-<video id="video" autoplay playsinline></video>
-
 <script>
 
-const params = new URLSearchParams(window.location.search)
-const camId = params.get("cam")
+const params = new URLSearchParams(location.search)
+const room = params.get("room")
 
-const video = document.getElementById("video")
-const startBtn = document.getElementById("start")
+const view =
+"https://vdo.ninja/?view="+room+"&cleanoutput&autoplay"
 
-startBtn.onclick = () => {
-
-const peer = new Peer()
-
-peer.on("open", () => {
-
-const call = peer.call(camId, new MediaStream())
-
-call.on("stream", stream => {
-
-video.srcObject = stream
-
-})
-
-})
-
-}
+document.body.innerHTML =
+'<iframe src="'+view+'"></iframe>'+
+'<iframe src="'+view+'"></iframe>'
 
 </script>
 
