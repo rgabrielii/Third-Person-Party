@@ -9,23 +9,18 @@
 body{
 margin:0;
 background:black;
-overflow:hidden;
 display:flex;
+overflow:hidden;
 }
 
 .eye{
 width:50vw;
 height:100vh;
-overflow:hidden;
-position:relative;
 }
 
 .eye iframe{
-position:absolute;
-height:100vh;
-width:177.7vh; /* motsvarar 16:9-video */
-left:50%;
-transform:translateX(-50%);
+width:100%;
+height:100%;
 border:none;
 }
 
@@ -63,14 +58,14 @@ startBtn.remove()
 const leftEye = document.createElement("div")
 const rightEye = document.createElement("div")
 
-leftEye.className = "eye"
-rightEye.className = "eye"
+leftEye.className="eye"
+rightEye.className="eye"
 
 const left = document.createElement("iframe")
 const right = document.createElement("iframe")
 
-left.src = viewURL
-right.src = viewURL
+left.src=viewURL
+right.src=viewURL
 
 leftEye.appendChild(left)
 rightEye.appendChild(right)
