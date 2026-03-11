@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>VR Mode</title>
+<title>VR View</title>
 
 <style>
 
-body{
+html,body{
 margin:0;
+padding:0;
 background:black;
 overflow:hidden;
 }
@@ -22,23 +23,15 @@ height:100vh;
 width:50vw;
 height:100vh;
 overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+background:black;
 }
 
-.eye iframe{
-width:100vw;
-height:100vh;
-border:none;
-}
-
-#start{
-position:absolute;
-top:50%;
-left:50%;
-left:50%;
-transform:translate(-50%,-50%);
-font-size:28px;
-padding:20px 40px;
-z-index:10;
+video{
+width:100%;
+height:auto;
 }
 
 </style>
@@ -46,40 +39,28 @@ z-index:10;
 
 <body>
 
-<button id="start">Start VR</button>
+<div id="container">
 
-<div id="container" style="display:none;">
-<div class="eye" id="leftEye"></div>
-<div class="eye" id="rightEye"></div>
+<div class="eye">
+<video id="left" autoplay playsinline></video>
+</div>
+
+<div class="eye">
+<video id="right" autoplay playsinline></video>
+</div>
+
 </div>
 
 <script>
 
-const params = new URLSearchParams(location.search)
+const params = new URLSearchParams(window.location.search)
 const room = params.get("room")
 
-const viewURL =
-"https://vdo.ninja/?view="+room+"&cleanoutput&autoplay"
+const streamURL =
+"https://vdo.ninja/?view="+room+"&clean&autostart&mute"
 
-const startBtn = document.getElementById("start")
-const container = document.getElementById("container")
-
-startBtn.onclick = () => {
-
-startBtn.remove()
-container.style.display="flex"
-
-const frame = document.createElement("iframe")
-frame.src = viewURL
-
-document.getElementById("leftEye").appendChild(frame)
-
-const frameClone = frame.cloneNode()
-frameClone.src = viewURL + "&v=" + Math.random()
-
-document.getElementById("rightEye").appendChild(frameClone)
-
-}
+document.getElementById("left").src = streamURL
+document.getElementById("right").src = streamURL
 
 </script>
 
